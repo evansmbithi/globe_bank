@@ -1,0 +1,255 @@
+we structure files to have public and private entries, so that only images and pages (in the public folder) are accessible to the public but functions, db credentials and queries (in the private folder) remain hidden.
+
+index.php prevents the web server from giving away info. that should not be accessible by the public/users. A web server may be configured to display the contents of a directory whenever the index.php file is not present. This may give away information on some file that we wouldn't want the public to access. 
+
+Include and require files (DRY)
+include()
+Allows the ability to include code from other files into a php page. Helps to stay organized and avoid repeating ourselves. That way the code is contained in one area that is easy to find and update.
+    <?php include('functions.php'); ?>
+Files we can load include:
+* Libraries of functions
+* Layout sections: header, footer, navigation, sidebar
+  - we can take these sections and create reusable portions that can be loaded into different web pages
+* Any reusable sections of code (HTML, PHP, JavaScript)
+
+Any content above the include is treated as part of the file 
+
+require()
+Require works like include except it raises an error whenever a file is not found or unable to load. Therefore the rest of the php will simply not execute. Include does not do that!
+we use require if the file is essential to the rest of the page.
+
+include_once()
+require_once()
+The above keep track of when a file is loaded in PHP. When asked to load the file again it will skip over it.
+They are important in php functions, because you don't want to define a function more than once. PHP will give an error like "Sorry you've already defined that function".
+
+If we wanted to include code to load up an ad on a page in three different places then we'll use include() or require() to load three different times. This would not work with include_once or require_once because they would only load the ad once rather than thrice.
+
+__FILE__ returns the path directory of the current file
+dirname() returns the path to the parent directory './'
+
+'/' creates an absolute URL e.g "/subjects/index.php" would resolve to localhost/subjects/index.php whereas "subjects/index.php" (without '/') would resolve to a relative path /path_to_directory/subjects/index.php
+../../subjects/index.php also creates an absolute path
+
+      // Looks for '/public' and figures out that that's where the document root is
+      //initialize.php
+      $public_end = strpos($_SERVER['SCRIPT_NAME'], '/public') + 7;
+      $doc_root = substr($_SERVER['SCRIPT_NAME'], 0, $public_end);
+      define("WWW_ROOT", $doc_root);
+
+      //functions.php
+      function url_for($script_path) {
+        // add the leading '/' if not present
+        if($script_path[0] != '/') {
+          $script_path = "/" . $script_path;
+        }
+        return WWW_ROOT . $script_path;
+      }
+
+URL parameters enable us to pass values from one page to another eg. 'www.facebook.com?id=2'
+$_GET['id'] recieves the passed value on to the new page.
+
+Superglobal variables
+$_GET and $_POST
+GET makes a request to read back information from the server.
+The idea is that we are GETting back info
+Whenever one types a URL on a browser or clicks a link, they are issuing a GET request.
+POST is used in forms when submitting data to the server
+Links allow us to GET data, forms allow us to POST data
+POST does not require one to do any special encoding on form parameters
+
+Ternary conjunction
+syntax
+condition ? true : false;
+for PHP > 7.0
+$page = $_GET['id'] ?? '1';
+checks to see if there's a value, if not, it returns 1 as the default value
+
+rawurlencode vs urlencode
+rawurlencode is used on the path; before the ?. Spaces are encoded as %20. urlencode is used on the query string; after the ?. URL parameters should be urlencoded! Spaces are encoded as '+' 
+
+XSS - Cross Site Scripting
+An attacker tricks a web page into outputting JavaScript on a webpage. The browser sees it as code that was returned by PHP; Just like we have HTML output. 
+To prevent XSS, we escape HTML tags using the htmlspecialchars() function on all data from users or cookies 
+
+output buffering
+To turn on output buffering:
+* uncomment the output_buffer=4096 section in php.ini file or
+* use ob_start() before any content and ob_end_flush() to end the buffer session.
+* It's best to use ob_start() especially when the code may be ported to other servers
+* One doesn't need to explicitly call ob_end_flush(), php will automatically do it.
+
+<dl>Data List
+    <dt>Data Term</dt> //label
+    <dd>Data Definition</dd> //field
+</dl>
+
+MYSQL main commands:
+SHOW DATABASES;
+CREATE DATABASE db_name;
+USE db_name;
+DROP DATABASE db_name;
+
+It's best practice to not allocate a web application permissions to a root user. One ought to create a new mysql user with a password and grant db access to that single user. This limits the scope of access to just that single db. So that the app only has access to the db we've granted privileges on. 
+Creating a MYSQL user:
+//grant privileges of all tables on that database to the 'new_user'@'ip_address'
+GRANT ALL PRIVILEGES ON db_name . *
+TO 'username'@'localhost'
+IDENTIFIED BY 'password';
+
+//shows the user privileges
+SHOW GRANTS FOR 'username'@'localhost';
+
+Table Operations
+//create table
+CREATE TABLE subjects (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  menu_name VARCHAR(255),
+  position INT(3),
+  visible TINYINT(1),
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE table_name (
+  column_name1 definition,
+  column_name2 definition,
+  column_name3 definition,
+  options
+);
+SHOW TABLES;
+SHOW COLUMNS FROM tbl_name;
+DROP TABLE tbl_name;
+
+A foreign key ought to have an index this can easily be done by altering an existing table or create a table and perform the following:
+ALTER TABLE tbl_name ADD INDEX index_fk  (column); //adding an index on foreign keys
+
+INDEXES
+An index is a data structure on a table that increases its lookup speed. Like an index at the back of a book, you don't have to search through the whole book, rather just lookup the page no. on the index and go straight to the target page
+Indexes go in columns which are frequently used for looking up information. Two most common columns are primary and foreign keys; primary keys are automatically allocated an index, while foreign keys have to be allocated individually. Anytime you have a foreign key, put an index on it.
+
+CREATE TABLE subjects (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  menu_name VARCHAR(255),
+  position INT(3),
+  visible TINYINT(1), //boolean
+  PRIMARY KEY (id)
+);
+
+SQL SELECT (read)
+SELECT *
+FROM tbl_name
+WHERE column1 = 'some_text'
+ORDER BY column1 ASC;
+
+SQL INSERT (create)
+INSERT INTO tbl_name (col1, col2, col3) VALUES (val1, val2, val3);
+
+SQL UPDATE (update)
+UPDATE tbl_name SET col1 = 'this', col2 = 'that' WHERE id = 1;
+
+SQL DELETE (delete)
+DELETE FROM tbl_name WHERE id = 1;
+
+SELECT returns a result set
+CREATE, UPDATE and DELETE returns a boolean (true or false).
+
+Database APIs in PHP
+mysql: original API
+mysqli: MySQL Improved API
+PDO: PHP data objects
+
+$result_set = mysqli_query($connection, $query);
+// SELECT query returns a $result_set
+mysqli_free_result($result_set); 
+//improves performance by freeing up the memory after using the queried data. It's necessary when retrieving thousands records from the database to free up the result set from a query as it could have major impacts on the memory requirements of your website affecting the overall performance
+
+mysqli_fetch_row() 
+returns the results in a standard array e.g
+['1','About Globe Bank','1','1']
+To access these values just use the normal array fashion
+echo $subject[1] this would return 'About Globe Bank'
+This method is not efficient because it is not easy to remember the index of a particular value in the database
+
+mysqli_fetch_assoc($result_set)
+returns the results in an associative array
+['id' => '1', 'menu_name' => 'About Globe Bank', 'position' => '1', 'visible' => '1']
+each value contains a label
+values can be accessed by their column names
+echo $subject['menu_name];
+This method is easier, however, much slower than the former
+
+mysqli_fetch_array()
+Results are in either or both types of array
+
+mysqli_connect_errno()
+gets the error number whenever an error occurs
+mysqli_connect_error()
+matches the error number to a string describing the error
+
+mysqli_insert_id($connection);
+when doing an insert, we don't always know what id the database assigns to the record
+this function returns the id that was generated automatically.
+
+mysqli_num_rows($result_set);
+Returns the total number of rows
+
+always put single quotes '' to all of the values you submit to SQL.
+
+Why POST requests are best practice
+Web crawlers and search engine spiders go about clicking all links in a website which are GET requests. However they cannot submit any forms (which are POST requests).
+Imagine if a link simply deleted a record in the database, a web crawler could delete everything in the database just by following the link. 
+One could probably keep these pages password protected to keep search engines out. However it's still good practice to have deleting records only work whenever there's a POST request.
+
+Form validations
+validation types(requirements)
+* presence - data can't be left blank. Required fields
+* string length - exact length, more than or less than certain values
+* type - check whether the data is the right type
+* inclusion in a set - the user does not provide values outside the choices provided
+* format - e.g email, time format, currency
+* uniqueness - if username is already taken, validation fails
+It's good practice to keep track of errors and tally all the issues and send them to the user at once 
+
+
+strpos()
+returns the position of a character in a string
+strpos('abcde', 'a')
+//returns 0 because 'a' is in index 0
+
+Data sanitize
+convert characters with special meaning to data
+escape tranformant strings so that characters that have power are rendered harmless e.g backslash before all single quotes "mbithi\'s inventory"
+addslashes($string)
+adds backslashes before any special characters that need to be escaped
+msqli_real_escape_string($db,$string) works like the former. However, it only work when we have a connection to the db with mysql.
+
+Preventing SQL injections
+* Always put single quotes around all values. Helps prevent SQL injection
+* Typecasting the id (forcing it to a number) will convert the string to a number 
+$sql = "WHERE id=" . (int) $id;
+This approach would affect performance because of the numerous type conversions. Remember, URL and form data come as string even if there are numbers. So the $id starts out as string, then here we converting it to integer. Then when we concatenate it back on the sql, it turns to a string again.
+* Using prepared statements separates the query from dynamic data; prevents SQL injection and eliminates the need to escape dynamic data
+Prepared statements give mysql a template for a query then indicate places (with ? question marks) where you can fill in the blanks later
+INSERT INTO table 
+  (col1,col2,col3)
+VALUES
+  (?,?,?);
+when running the query, we call up the template, fill in the blanks, then tell mysql to run.
+This allows to prepare the statement once then reuse it many times
+
+Prepared statements example
+$sql = "SELECT id, first_name, last_name ";
+$sql .= "FROM users ";
+$sql .= "WHERE username = ? AND password = ?";
+$stmt = mysqli_prepare($connection, $sql);
+
+//'ss' - format that shows the data type for the required variables. Strings for this case 'string string'
+mysqli_stmt_bind_param($stmt, 'ss', $username, $password);
+
+mysqli_stmt_execute($stmt);
+
+mysqli_stmt_bind_result($stmt,$id,$first_name,$last_name);
+
+mysqli_stmt_fetch($stmt);
+
+mysqli_stmt_close($stmt);

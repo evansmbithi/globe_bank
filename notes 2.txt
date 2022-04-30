@@ -1,0 +1,117 @@
+TODO
+PHP essentials
+PHP beyond basics
+
+PHP Database Interactions
+* Create a connection
+* Perform a database query
+* Use the returned data (if any)
+* Release the returned data
+* Close the database connection
+
+conditional code - passing options to functions
+function find_all_subjects($options=[]){
+  //single condition
+  $visible = $options['visible'] ?? false;
+
+  if($visible){
+    //...
+  }
+}
+
+// multiple conditions
+// $options = ['visible' => true, 'order' => 'ascending'];
+find_all_subjects(['visible' => true, 'order' => 'ascending']);
+
+IDOR - Insecure Direct Object Reference
+* security threat
+* viewing sth one should not be able to see
+* code fails to verify a user's authorization before giving access to a restricted resource
+
+$strip_tags($string, $allowable_tags=' ');
+takes a string as an argument and strips all HTML tags out.
+It allows for specification of allowable tags; to whitelist tags that are allowed to remain
+
+nl2br($string)
+new line to <br>
+converts all new line into HTML <br> tags creating line breaks in chunks of paragraphs.
+
+Cookies
+String of data stored in a user's browser
+Cookies are stored by/per website domain
+Cookies are set and sent in the headers. Headers are sent before any page data.
+Cookies must be set before any output can be made (even white space) unless output buffering has been turned on.
+The first time a browser sends a request to the server, the server responds back with a cookie directive in the header of that website. e.g Set-cookie: admin_id=21. The webserver tells the browser to save that data for later. Then, whenever the browser makes another request back to that web server, it's going to include that cookie data in its header. 
+GET /second_page.php HTTP/1.1
+HOST: www.mbithi.rocks
+Cookie: admin_id=21
+Accept: */*
+Cookies can also be used to set/store language preferences. So the next time you visit the website. it remembers that your language preference is english.
+cookies are sent with every single request to the website domain.
+
+setcookie(
+  $name,  
+  $value,
+  $expires,  //unix timestamp-no. of sec since 1970.  
+  $path,  //path on the server to which the cookie is only available
+  $domain,  //entire website
+  $secure,  //boolean- if true, the cookie will be transmitted only when there's a secure https transmition
+  $httonly  //boolean- should only be sent along with the header; shouldn't be available in javascript. Keeps hackers from being able to use javascript to steal cookie data
+  );
+
+$expires = time() + 60*60*24*14;  //sets expiration 2 weeks from now 
+
+setcookie(
+  'lang', // name of the cookie
+  'english',
+  '$expires', // how long the cookie should stick around for; days or years
+  '/' // path set for the entire website
+  'mysite.com',
+  false,  //can be transferred over non-https connections
+  true  //javascript can't access this cookie
+);
+
+
+$language = $_COOKIE['lang'] ?? ''; // this is going to read the cookie data assigned to the name 'lang'
+
+when we set a cookie, we're saying that it should be set in the header that should be returned back to the user. We won't get that value back into the superglobal ($_COOKIE) until the next request comes in.
+
+the superglobal $_COOKIE[] stores the value recieved from the previous request. All it does is modify the current associative array, without getting rid of the existing cookie.
+
+cookies can only be deleted with the same options as used for setting the cookie: path, domain, expiration etc. 
+one cannot actually delete a cookie. Rather it can be modified by:
+setting the expiration to some time in the past 
+setting the value to false - setcookie($name, false);
+setcookie($name,$value,(time() - 3600)); - sets the expiration to one hour in the past
+
+avoid using boolean values whenever setting a cookie. This may accidentally unset a cookie by virtue of setting a false value. Instead use values 0 for false and 1 for true because those don't have the side effect of deleting the cookie.
+
+SESSIONS
+stores data in a session file stored on the web server. It's not sent to the user to store in a cookie.
+sends the Reference identifier for that session to the user as a cookie; not the actual data but a representation of the data
+more storage
+smaller request sizes; cookies sends data with every single request doesn't matter whether it's data for html, js or an image file. Sessions only send the session identifier
+conceals data values - unlike cookies, all data is stored on the server, user cannot view nor modify it. With cookies, data sits in the user's browser; user has the ability to view that data or even to modify it.
+expires when browser is closed
+sessions are turned off by default. Use the following to start sessions
+$session_start($options)
+
+Uses:
+* For frequently referred to data - things we don't want to look up from the database every now and then. We just grab them from session data
+* user authentication - stores details of the users that are logged in; secure and not editable unlike storing it in cookies where the user has the potential to manipulate data pretending to be a different user
+* store data during redirects; status messages eg "page deleted successfully"
+* record username so that when a user logs into the system, the username is stored in the sessions so that we have quick reference, without going back to the db every time we want to display the username
+
+setting a session
+$_SESSION['username'] = $username;
+$username = $_SESSION['username'] ?? '';
+
+unsetting a session
+unset($_SESSION['username']);
+
+PASSWORD ENCRYPTION
+bcrypt based on blowfish cipher - one-way encryption, strong, slow
+$password_hash($password, PASSWORD_DEFAULT);
+$password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]); //returns an encrypted string
+'cost' - how many times the BCRYPT cycles
+$password_verify($password, $hashed_password); //compares the attampted password to the encrypted string; returns true or false
