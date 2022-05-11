@@ -120,20 +120,14 @@ SHOW TABLES;
 SHOW COLUMNS FROM tbl_name;
 DROP TABLE tbl_name;
 
-A foreign key ought to have an index this can easily be done by altering an existing table or create a table and perform the following:
-ALTER TABLE tbl_name ADD INDEX index_fk  (column); //adding an index on foreign keys
-
 INDEXES
 An index is a data structure on a table that increases its lookup speed. Like an index at the back of a book, you don't have to search through the whole book, rather just lookup the page no. on the index and go straight to the target page
 Indexes go in columns which are frequently used for looking up information. Two most common columns are primary and foreign keys; primary keys are automatically allocated an index, while foreign keys have to be allocated individually. Anytime you have a foreign key, put an index on it.
 
-CREATE TABLE subjects (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  menu_name VARCHAR(255),
-  position INT(3),
-  visible TINYINT(1), //boolean
-  PRIMARY KEY (id)
-);
+A foreign key ought to have an index this can easily be done by altering an existing table or create a table and perform the following:
+ALTER TABLE tbl_name ADD INDEX index_fk  (column); //adding an index on foreign keys
+
+ALTER TABLE admins ADD INDEX index_username (username);
 
 SQL SELECT (read)
 SELECT *

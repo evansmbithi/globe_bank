@@ -2,7 +2,7 @@
 
   // Performs all actions necessary to log in an admin
   function log_in_admin($admin) {
-  // Renerating the ID protects the admin from session fixation.
+  // Renerating the ID protects the admin from session fixation. 
   // user gets a new ID everytime they login
   // the ID will be stored as an admin ID
     session_regenerate_id();

@@ -7,7 +7,7 @@ require_once('../../private/initialize.php');
  * @Mystirica2022
  */
 
-$errors = [];
+// $errors = [];
 $username = '';
 $password = '';
 

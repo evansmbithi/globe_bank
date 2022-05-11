@@ -29,7 +29,7 @@ if(is_post_request()){
 }else{
   // redirect_to(url_for('/staff/pages/new.php'));
   $page = [];
-  $page['subject_id'] = '';
+  $page['subject_id'] = $_GET['subject_id'] ?? '';
   $page['menu_name'] = '';
   $page['position'] = '';
   $page['visible'] = '';
@@ -42,11 +42,12 @@ if(is_post_request()){
 
 $page_set = find_all_pages();
 // total number of rows
-$page_count = mysqli_num_rows($page_set) + 1;
+// $page_count = mysqli_num_rows($page_set) + 1;
 mysqli_free_result($page_set);
 // $page_set = find_all_pages();
 // $page_count = mysqli_num_rows($page_set);
 
+$page_count = count_pages_by_subject_id( $page['subject_id']) + 1;
 
 ?>
 
@@ -55,7 +56,7 @@ mysqli_free_result($page_set);
 <?php include(SHARED_PATH . '/staff_header.php'); ?>
 
 <div id="content">
-  <a href="<?php echo url_for('/staff/pages');?>">&laquo; Back to List</a>
+<a href="<?php echo url_for('/staff/subjects/show.php?id=' . h(u($page['subject_id'])));?>">&laquo; Back to Subject Page</a>
 
   <div class="subject new">
     <h1>Create Page</h1>

@@ -99,7 +99,7 @@ $session_start($options)
 Uses:
 * For frequently referred to data - things we don't want to look up from the database every now and then. We just grab them from session data
 * user authentication - stores details of the users that are logged in; secure and not editable unlike storing it in cookies where the user has the potential to manipulate data pretending to be a different user
-* store data during redirects; status messages eg "page deleted successfully"
+* store data during redirects; status messages eg "page deleted successfully". A redirect tells the browser to make a fresh request
 * record username so that when a user logs into the system, the username is stored in the sessions so that we have quick reference, without going back to the db every time we want to display the username
 
 setting a session
@@ -110,8 +110,11 @@ unsetting a session
 unset($_SESSION['username']);
 
 PASSWORD ENCRYPTION
-bcrypt based on blowfish cipher - one-way encryption, strong, slow
+Never store passwords in plain text; always encrypt
+one-way encryption - it's not possible for anyone to decrypt and get the original string
+  same inputs + same hashing = same output! 
+bcrypt based on blowfish cipher built in PHP - one-way encryption, strong, slow enough to deter bruteforce attacks (Rapid guessing)
 $password_hash($password, PASSWORD_DEFAULT);
 $password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]); //returns an encrypted string
 'cost' - how many times the BCRYPT cycles
-$password_verify($password, $hashed_password); //compares the attampted password to the encrypted string; returns true or false
+$password_verify($plaintext_password, $hashed_password); //compares the attampted password to the encrypted string; returns true or false

@@ -9,16 +9,13 @@ if(!isset($_GET['id'])){
 }
 
 $id = $_GET['id'];
+$page = get_page_by_id($id);
 
 if(is_post_request()){
   $page_delete = delete_page($id);
   // Store Status message in sessions
   $_SESSION['message'] = 'The page was deleted successfully!'; 
-  redirect_to(url_for('/staff/pages/index.php'));
-
-}else{
-  $page = get_page_by_id($id);
-  
+  redirect_to(url_for('/staff/subjects/show.php?id=' . h(u($page['subject_id']))));
 
 }
 ?>
@@ -27,7 +24,7 @@ if(is_post_request()){
 <?php include(SHARED_PATH . '/staff_header.php'); ?>
 
 <div id="content">
-  <a href="<?php echo url_for('/staff/pages');?>">&laquo; Back to List</a>
+<a href="<?php echo url_for('/staff/subjects/show.php?id=' . h(u($page['subject_id'])));?>">&laquo; Back to Subject Page</a>
 
   <h1>Delete Page</h1>
   <p>Are you sure you want to delete page <?php echo h($page['menu_name']); ?></p>

@@ -32,9 +32,11 @@ if(is_post_request()){
   
 }
   // page count
-  $page_set = find_all_pages();
-  $page_count = mysqli_num_rows($page_set);
-  mysqli_free_result($page_set);
+  // $page_set = find_all_pages();
+  // $page_count = mysqli_num_rows($page_set);
+  // mysqli_free_result($page_set);
+
+  $page_count = count_pages_by_subject_id( $page['subject_id']);
 
 ?>
 
@@ -43,7 +45,7 @@ if(is_post_request()){
 <?php include(SHARED_PATH . '/staff_header.php'); ?>
 
 <div id="content">
-  <a href="<?php echo url_for('/staff/pages');?>">&laquo; Back to List</a>
+  <a href="<?php echo url_for('/staff/subjects/show.php?id=' . h(u($page['subject_id'])));?>">&laquo; Back to Subject Page</a>
 
   <div class="subject new">
     <h1>Edit Page: <?php echo h($page['menu_name']) ?></h1>
