@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 30, 2022 at 02:44 PM
+-- Generation Time: May 11, 2022 at 04:34 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.2
 
@@ -42,19 +42,8 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`id`, `first_name`, `last_name`, `email`, `username`, `hashed_password`) VALUES
-(1, 'Evans', 'Mbithi', 'admin@gmail.com', 'admin', '$2y$10$G8gfFEx89/S..r5l5s5/XOuh7q5eMAyV92M5ME0xUaYst9hlzIQTy');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `me`
---
-
-CREATE TABLE `me` (
-  `id` int(3) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `age` int(3) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+(1, 'Default', 'Admin', 'admin@gmail.com', 'admin', '$2y$10$slYg8lXUgSdE.o.7qMnOw.aBlfK.5efmqziwJR427eX5R0Vd8cuvC'),
+(7, 'Evans', 'Mbithi', 'evholmbithy@gmail.com', 'mbithi', '$2y$10$JrmyPtZ7Euy9iBEQmP3EQu7sAMlRkj1a.jYKTVG8Z5IoVvIs5U0Km');
 
 -- --------------------------------------------------------
 
@@ -125,12 +114,6 @@ ALTER TABLE `admin`
   ADD KEY `index_username` (`username`);
 
 --
--- Indexes for table `me`
---
-ALTER TABLE `me`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `pages`
 --
 ALTER TABLE `pages`
@@ -151,25 +134,19 @@ ALTER TABLE `subjects`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `me`
---
-ALTER TABLE `me`
-  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pages`
 --
 ALTER TABLE `pages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `subjects`
 --
 ALTER TABLE `subjects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
